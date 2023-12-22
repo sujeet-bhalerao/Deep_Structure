@@ -138,4 +138,4 @@ The poster from Spring 2022 is below.
 
 Here's a dendrogram that shows the clustering of faculty members based on data number of common papers they reference and number of common papers they are cited by:
 
-![sampledendrogram](https://github.com/sujeet-bhalerao/Deep_Structure/Clustering/norm_comm_refs_joint_cit.png)
+![sampledendrogram](https://github.com/sujeet-bhalerao/Deep_Structure/blob/main/Clustering/norm_comm_refs_joint_cit.png)
