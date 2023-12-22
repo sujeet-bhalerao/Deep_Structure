@@ -3,79 +3,17 @@ This repository contains code for the [Illinois Geometry Lab](https://math.illin
 
 Briefly, the code in this repository collects data about publications by math faculty from [MathSciNet](https://mathscinet.ams.org/mathscinet/index.html) and uses it to cluster the department faculty into research areas using hierarchical clustering. 
 
-
+## Contents
+- [Description](##Files)
+- [Usage](#usage)
+- [Poster and sample output](#poster)
 
 ## Files
 There are two main python scripts that fetch data: `get_publication_data.py` and `get_citations.py`.
 
-- `info_fetch/get_publication_data.py` collects, for each faculty member, all papers published by that faculty member, the journal the paper was published in, the year of publication, the classification codes for that paper, the authors of the paper, and the MathSciNet ID of the paper. The collected data is stored in `data/papers/`. Results are stored as a nested dictionary with the following structure:
+- `info_fetch/get_publication_data.py` collects, for each faculty member, all papers published by that faculty member, the journal the paper was published in, the year of publication, the classification codes for that paper, the authors of the paper, and the MathSciNet ID of the paper. The collected data is stored in `data/papers/`. 
 
-    - The root level of the dictionary has keys that are the MathSciNet ID of each faculty member, with values being another dictionary storing all the relevant data for that faculty member.
-    - Within the faculty member dictionary, there is a key "AuthorID" that maps to the faculty member's MathSciNet ID, and a "Papers" key that maps to yet another nested dictionary, where each key is a paper ID (e.g., "MR4604472") and each value is a "paper dictionary" storing the information for that paper.
-    - Here is what the keys of a "paper dictionary" look like:
-        * "Title": The title of the paper.
-        * "PaperID": The MathSciNet ID of the paper.
-        * "Authors": A list of pairs, where each pair contains an author's name and their MathSciNet ID.
-        * "Journal_Name": The name of the journal the paper was published in and the journal ID, as a list.
-        * "Publication_Year": The year the paper was published.
-        * "References": A list of the MathSciNet IDs of papers that are referenced by the paper in question. If there are no references, this list can be empty.
-        * "Codes": The classification codes for the paper.
-    - For example: 
-    ```json
-    {
-        "Papers": {
-            "MR4195744": {
-                "Title": "Long gaps in sieved sets.",
-                "PaperID": "MR4195744",
-                "Authors": [
-                    ["Ford, Kevin", "325647"],
-                    ["Konyagin, Sergei", "188475"],
-                    ["Maynard, James", "1007204"],
-                    ["Pomerance, Carl", "140915"],
-                    ["Tao, Terence", "361755"]
-                ],
-                "Journal_Name": ["J. Eur. Math. Soc. (JEMS)", "5961"],
-                "Publication_Year": "2021",
-                "References": [
-                    "MR4592874",
-                    "MR3718451",
-                    "MR0148632",
-                    "MR2200366",
-                    "MR3718451",
-                    "MR2647984",
-                    "MR0424730",
-                    "MR0404173",
-                    "MR0447191",
-                    "MR1511191",
-                    "MR3742457",
-                    "MR1512273",
-                    "MR1550517",
-                    "MR4195744"
-                ],
-                "Codes": "11N35,(11B05,11N32)"
-            },
-            "MR4588563": { 
-                "Title": "..." }
-        }
-    }
-    ```
-
-    - The classification code for each paper is stored as a single string, so extracting the primary secondary classification codes requires some string manipulation. 
-
-- `info_fetch/get_citations.py` collects, for each faculty member, all papers that have cited their publications. Results are stored as a dictionary for each faculty member in `data/citations/` as  `{name}_citations.json`. The key is the MR number of the paper, and the value is a list of papers (each paper is itself represented as a list with two elements, first the title, second the MR number) that have cited the paper in the key. For example:
-
-```json
-{
-    "MR4524115": [
-        ["Relations among Ramanujan-type congruences II: Ramanujan-type congruences in half-integral weights.", "MR4587277"], 
-        ["Congruence relations for\nr\n-colored partitions.", "MR4569268"]
-    ],     
-
-    "MR4039543": 
-        [
-            ...
-        ]
-```
+- `info_fetch/get_citations.py` collects, for each faculty member, all papers that have cited their publications. Results are stored as a dictionary for each faculty member in `data/citations/` as  `{name}_citations.json`. 
     
 - `info_fetch/using_stored_data.py` shows how to use the data obtained from `get_publication_data.py` for each faculty member to extract relevant information (list of coauthors, list of journals published in, list of papers referenced etc.).
 
@@ -92,10 +30,112 @@ There are two main python scripts that fetch data: `get_publication_data.py` and
 
 - `info_fetch/get_author_ids.py` collects the MathSciNet ID for each faculty member. Results are stored in `data/dict_of_author_ids.json`. When there are multiple authors with the same name, the author ID has to be corrected by hand.
 
-- The folder `Clustering` has code that carries out hierarchical clustering using the collected data and produces dendrograms, one for each distance measure based on publication data collected. There is also code for making consensus trees, which combines the results of clustering using different distance measures.
+- The folder `Clustering` has code that carries out hierarchical clustering using the collected data and produces dendrograms, one for each distance measure based on publication data collected. There is also code for making consensus trees, which combines the results of clustering using different distance measures. See `Clustering/ConsensusTrees.ipynb` and `Clustering/hierarchical.ipynb` for examples of trees made in 2022.
 
+## Data
+
+Results from `get_publication_data.py` are stored as a nested dictionary in `data/papers/` with the following structure:
+
+- The root level of the dictionary has keys that are the MathSciNet ID of each faculty member, with values being another dictionary storing all the relevant data for that faculty member.
+- Within the faculty member dictionary, there is a key "AuthorID" that maps to the faculty member's MathSciNet ID, and a "Papers" key that maps to yet another nested dictionary, where each key is a paper ID (e.g., "MR4604472") and each value is a "paper dictionary" storing the information for that paper.
+- Here is what the keys of a "paper dictionary" look like:
+    * "Title": The title of the paper.
+    * "PaperID": The MathSciNet ID of the paper.
+    * "Authors": A list of pairs, where each pair contains an author's name and their MathSciNet ID.
+    * "Journal_Name": The name of the journal the paper was published in and the journal ID, as a list.
+    * "Publication_Year": The year the paper was published.
+    * "References": A list of the MathSciNet IDs of papers that are referenced by the paper in question. If there are no references, this list can be empty.
+    * "Codes": The classification codes for the paper.
+- For example: 
+```json
+{
+    "Papers": {
+        "MR4195744": {
+            "Title": "Long gaps in sieved sets.",
+            "PaperID": "MR4195744",
+            "Authors": [
+                ["Ford, Kevin", "325647"],
+                ["Konyagin, Sergei", "188475"],
+                ["Maynard, James", "1007204"],
+                ["Pomerance, Carl", "140915"],
+                ["Tao, Terence", "361755"]
+            ],
+            "Journal_Name": ["J. Eur. Math. Soc. (JEMS)", "5961"],
+            "Publication_Year": "2021",
+            "References": [
+                "MR4592874",
+                "MR3718451",
+                "MR0148632",
+                "MR2200366",
+                "MR3718451",
+                "MR2647984",
+                "MR0424730",
+                "MR0404173",
+                "MR0447191",
+                "MR1511191",
+                "MR3742457",
+                "MR1512273",
+                "MR1550517",
+                "MR4195744"
+            ],
+            "Codes": "11N35,(11B05,11N32)"
+        },
+        "MR4588563": { 
+            "Title": "..." }
+    }
+}
+```
+
+- The classification code for each paper is stored as a single string, so extracting the primary secondary classification codes requires some string manipulation.
+
+ Results from `info_fetch/get_citations.py` are stored as a dictionary for each faculty member in `data/citations/` as  `{name}_citations.json`. The key is the MR number of the paper, and the value is a list of papers (each paper is itself represented as a list with two elements, first the title, second the MR number) that have cited the paper in the key. For example:
+
+```json
+{
+    "MR4524115": [
+        ["Relations among Ramanujan-type congruences II: Ramanujan-type congruences in half-integral weights.", "MR4587277"], 
+        ["Congruence relations for\nr\n-colored partitions.", "MR4569268"]
+    ],     
+
+    "MR4039543": 
+        [
+            ...
+        ]
+```
+
+
+
+### Dependencies
+
+This code uses 
+```
+beautifulsoup4==4.11.1
+numpy==1.23.5
+pandas==2.0.2
+selenium==4.1.0
+webdriver-manager==3.8.6
+```
+## Usage
+
+First clone this repository with 
+
+```
+git clone https://github.com/sujeet-bhalerao/Deep_Structure/
+```
+
+Install the necessary packages by running `pip install -r requirements.txt`.
+
+To scrape data for your own list of faculty members from MathSciNet, run `get_publication_data.py` from the `info_fetch` folder.
+
+Before you run either `get_publication_data.py`, make sure to update `credential.py` with your Illinois netID and password. Also update the list "list_of_profs" in `get_publication_data.py` with the names of the faculty members you want to collect data for. You may also have to change the ChromeDriverManager version. To avoid making too many requests at once, the code has many time delays built in, so it may take a while to run. 
+
+The new version of MathSciNet was released on June 19th, 2023. This code uses the old website, which is currently available at https://mathscinet.ams.org/mathscinet/2006/mathscinet. 
 ## Poster
 
 The poster from Spring 2022 is below. 
 
 ![image](https://github.com/sujeet-bhalerao/Deep_Structure/blob/main/Image/poster.png)
+
+Here's a dendrogram that shows the clustering of faculty members based on data number of common papers they reference and number of common papers they are cited by:
+
+![sampledendrogram](https://github.com/sujeet-bhalerao/Deep_Structure/Clustering/norm_comm_refs_joint_cit.png)
